@@ -32,7 +32,7 @@ A Flask web application for tracking and visualizing costs for various cloud ser
 
 ```bash
 git clone <repository-url>
-cd redshift-cost-manager
+cd cloud-services-cost-manager
 ```
 
 2. Create and activate a virtual environment
