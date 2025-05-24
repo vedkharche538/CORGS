@@ -94,7 +94,122 @@ document.addEventListener('DOMContentLoaded', function() {
         ];
         monthSelectDashboard.value = months[currentMonth];
     }
+// Main JavaScript functions
 
+// Function to handle active state in navbar based on current page
+document.addEventListener('DOMContentLoaded', function() {
+    // Get current path
+    const path = window.location.pathname;
+
+    // Find nav links
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+
+    // Add active class to current page link
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (path === href) {
+            link.classList.add('active');
+        }
+    });
+
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl, {
+            boundary: document.body
+        });
+    });
+
+    // Form validation styles
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+
+    // Add animation to cards
+    const cards = document.querySelectorAll('.animated-card');
+    if (cards.length > 0) {
+        const animateCards = () => {
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('card-visible');
+                }, 100 * index);
+            });
+        };
+        animateCards();
+    }
+});
+
+// Function to format currency
+function formatCurrency(value) {
+    return '$' + parseFloat(value).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+// Function to create a confirmation modal
+function confirmAction(message, callback) {
+    // Check if modal already exists
+    let modal = document.getElementById('confirmationModal');
+
+    // If not, create it
+    if (!modal) {
+        const modalHTML = `
+        <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="confirmationMessage">
+                        ${message}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmBtn">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+
+        const div = document.createElement('div');
+        div.innerHTML = modalHTML;
+        document.body.appendChild(div.firstChild);
+
+        modal = document.getElementById('confirmationModal');
+    } else {
+        // Update message if modal exists
+        document.getElementById('confirmationMessage').textContent = message;
+    }
+
+    // Get the modal instance
+    const modalInstance = new bootstrap.Modal(modal);
+
+    // Set up confirmation button
+    const confirmBtn = document.getElementById('confirmBtn');
+
+    // Remove any existing event listeners
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Add new event listener
+    newConfirmBtn.addEventListener('click', function() {
+        modalInstance.hide();
+        callback();
+    });
+
+    // Show the modal
+    modalInstance.show();
+}
     // Add active class to current nav item
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
