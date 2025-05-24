@@ -1,12 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 import os
 import json
-import io
 from datetime import datetime
 from werkzeug.utils import secure_filename
-
+import webview
 app = Flask(__name__)
-
+window = webview.create_window('Cloud Services Cost Management', app)
 # Data storage file paths
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -735,4 +734,5 @@ def download_sample_excel():
 initialize_data_files()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    webview.start()
