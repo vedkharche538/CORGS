@@ -25,5 +25,41 @@
         "month": "April",
         "year": 2025,
         "date_added": "2025-05-24 01:42:06"
+    },
+    {
+        "id": 4,
+        "service_id": 4,
+        "environment": "production",
+        "cost": 1250.5,
+        "month": "January",
+        "year": 2025,
+        "date_added": "2025-05-24 13:48:27"
+    },
+    {
+        "id": 5,
+        "service_id": 5,
+        "environment": "dev",
+        "cost": 325.75,
+        "month": "January",
+        "year": 2025,
+        "date_added": "2025-05-24 13:48:27"
+    },
+    {
+        "id": 6,
+        "service_id": 6,
+        "environment": "production",
+        "cost": 890.25,
+        "month": "February",
+        "year": 2025,
+        "date_added": "2025-05-24 13:48:27"
+    },
+    {
+        "id": 7,
+        "service_id": 7,
+        "environment": "dev",
+        "cost": 125.0,
+        "month": "February",
+        "year": 2025,
+        "date_added": "2025-05-24 13:48:27"
     }
 ]

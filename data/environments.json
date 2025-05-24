@@ -1,1 +1,7 @@
-["dev", "qa", "performance", "sandbox", "production"]
+[
+    "dev",
+    "qa",
+    "performance",
+    "sandbox",
+    "production"
+]

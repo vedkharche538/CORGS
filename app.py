@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 import os
 import json
+import io
 from datetime import datetime
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -539,6 +541,195 @@ def api_dashboard_summary():
         'environment_count': environment_count,
         'category_count': category_count
     })
+
+# Excel import functionality
+@app.route('/import_excel', methods=['GET', 'POST'])
+def import_excel():
+    message = None
+    message_type = None
+    results = None
+
+    try:
+        import pandas as pd
+    except ImportError:
+        message = "Error: The pandas library is not installed. Please install it with 'pip install pandas openpyxl'"
+        message_type = "danger"
+        return render_template('import_excel.html', message=message, message_type=message_type, results=results)
+
+    if request.method == 'POST':
+        # Check if the post request has the file part
+        if 'excel_file' not in request.files:
+            message = 'No file part'
+            message_type = 'danger'
+        else:
+            file = request.files['excel_file']
+            update_existing = request.form.get('update_existing') == 'true'
+
+            if file.filename == '':
+                message = 'No selected file'
+                message_type = 'danger'
+            elif not file.filename.endswith('.xlsx'):
+                message = 'Only .xlsx files are allowed'
+                message_type = 'danger'
+            else:
+                try:
+                    # Read the Excel file
+                    df = pd.read_excel(file)
+
+                    # Validate the Excel format
+                    required_columns = ['Service Name', 'Service Category', 'Environment', 'Year', 'Month', 'Cost']
+                    missing_columns = [col for col in required_columns if col not in df.columns]
+
+                    if missing_columns:
+                        message = f"Missing required columns: {', '.join(missing_columns)}"
+                        message_type = 'danger'
+                    else:
+                        # Process the data
+                        results = process_excel_data(df, update_existing)
+                        message = 'Data imported successfully'
+                        message_type = 'success'
+                except Exception as e:
+                    message = f'Error processing Excel file: {str(e)}'
+                    message_type = 'danger'
+
+    return render_template('import_excel.html', message=message, message_type=message_type, results=results)
+
+# Function to process Excel data
+def process_excel_data(df, update_existing=False):
+    # Load existing data
+    services_data = load_data(SERVICES_FILE)
+    categories = load_data(SERVICE_CATEGORIES_FILE)
+    environments_data = load_data(ENVIRONMENTS_FILE)
+    costs_data = load_data(COSTS_FILE)
+
+    # Track results
+    results = {
+        'created': {
+            'services': 0,
+            'categories': 0,
+            'environments': 0,
+            'costs': 0
+        },
+        'updated': {
+            'costs': 0
+        },
+        'errors': []
+    }
+
+    # Lookup dictionaries for quicker access
+    service_dict = {s['name'].lower(): s for s in services_data if 'name' in s}
+
+    # Process each row
+    for _, row in df.iterrows():
+        try:
+            service_name = row['Service Name']
+            category_name = row['Service Category']
+            environment = row['Environment']
+            year = int(row['Year'])
+            month = row['Month']
+            cost = float(row['Cost'])
+
+            # Check/create category
+            if category_name not in categories:
+                categories.append(category_name)
+                results['created']['categories'] += 1
+
+            # Check/create environment
+            if environment not in environments_data:
+                environments_data.append(environment)
+                results['created']['environments'] += 1
+
+            # Check/create service
+            service_key = service_name.lower()
+            service_id = None
+
+            if service_key in service_dict:
+                service_id = service_dict[service_key]['id']
+            else:
+                # Create new service
+                service_id = len(services_data) + 1
+                new_service = {
+                    'id': service_id,
+                    'name': service_name,
+                    'description': f"Imported from Excel on {datetime.now().strftime('%Y-%m-%d')}",
+                    'category': category_name
+                }
+                services_data.append(new_service)
+                service_dict[service_key] = new_service
+                results['created']['services'] += 1
+
+            # Check if cost entry already exists
+            existing_cost = None
+            for cost_entry in costs_data:
+                if (cost_entry['service_id'] == service_id and 
+                    cost_entry['environment'] == environment and
+                    cost_entry['month'] == month and 
+                    cost_entry['year'] == year):
+                    existing_cost = cost_entry
+                    break
+
+            if existing_cost and update_existing:
+                # Update existing cost
+                existing_cost['cost'] = cost
+                existing_cost['date_added'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                results['updated']['costs'] += 1
+            elif not existing_cost:
+                # Create new cost entry
+                new_cost = {
+                    'id': len(costs_data) + 1,
+                    'service_id': service_id,
+                    'environment': environment,
+                    'cost': cost,
+                    'month': month,
+                    'year': year,
+                    'date_added': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+                costs_data.append(new_cost)
+                results['created']['costs'] += 1
+
+        except Exception as e:
+            results['errors'].append(f"Error in row {_ + 2}: {str(e)}")
+
+    # Save all data
+    save_data(services_data, SERVICES_FILE)
+    save_data(categories, SERVICE_CATEGORIES_FILE)
+    save_data(environments_data, ENVIRONMENTS_FILE)
+    save_data(costs_data, COSTS_FILE)
+
+    return results
+
+@app.route('/download_sample_excel')
+def download_sample_excel():
+    try:
+        import pandas as pd
+        import io
+    except ImportError:
+        return "Error: Required libraries not installed. Please install pandas and openpyxl.", 500
+
+    # Create a sample DataFrame with the required columns
+    sample_data = {
+        'Service Name': ['EC2 Instances', 'S3 Storage', 'RDS Database', 'Lambda Functions'],
+        'Service Category': ['Compute (EC2, Lambda)', 'Storage (S3, EBS, EFS)', 'Database (RDS, Redshift, DynamoDB)', 'Compute (EC2, Lambda)'],
+        'Environment': ['production', 'dev', 'production', 'dev'],
+        'Year': [2025, 2025, 2025, 2025],
+        'Month': ['January', 'January', 'February', 'February'],
+        'Cost': [1250.50, 325.75, 890.25, 125.00]
+    }
+    df = pd.DataFrame(sample_data)
+
+    # Create the Excel file in memory
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Cost Data')
+
+    output.seek(0)
+
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name='cloud_costs_template.xlsx',
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
 
 # Initialize data files when app starts
 initialize_data_files()

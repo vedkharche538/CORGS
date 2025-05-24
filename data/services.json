@@ -16,5 +16,29 @@
         "name": "Redshift",
         "description": "Redshift service",
         "category": "Database (RDS, Redshift, DynamoDB)"
+    },
+    {
+        "id": 4,
+        "name": "EC2 Instances",
+        "description": "Imported from Excel on 2025-05-24",
+        "category": "Compute (EC2, Lambda)"
+    },
+    {
+        "id": 5,
+        "name": "S3 Storage",
+        "description": "Imported from Excel on 2025-05-24",
+        "category": "Storage (S3, EBS, EFS)"
+    },
+    {
+        "id": 6,
+        "name": "RDS Database",
+        "description": "Imported from Excel on 2025-05-24",
+        "category": "Database (RDS, Redshift, DynamoDB)"
+    },
+    {
+        "id": 7,
+        "name": "Lambda Functions",
+        "description": "Imported from Excel on 2025-05-24",
+        "category": "Compute (EC2, Lambda)"
     }
 ]

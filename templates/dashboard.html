@@ -147,7 +147,10 @@
         <div class="card chart-card">
             <div class="card-header bg-gradient-warning">
                 <div class="d-flex align-items-center justify-content-between">
-                    <div>
+                        <div class="d-flex align-items-center">
+                            <a href="{{ url_for('import_excel') }}" class="btn btn-outline-success me-3" data-bs-toggle="tooltip" title="Import cost data from Excel">
+                                <i class="fas fa-file-excel me-1"></i> Import Excel
+                            </a>
                         <i class="fas fa-chart-line me-2"></i>
                         <h5 class="mb-0 d-inline">Monthly Cost Trend</h5>
                     </div>
