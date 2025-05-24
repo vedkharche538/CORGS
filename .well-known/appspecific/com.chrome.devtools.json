@@ -1,0 +1,5 @@
+{
+  "version": "1.0",
+  "allowed_origins": ["chrome-devtools://devtools", "devtools://devtools"],
+  "allow_web_debugging": true
+}

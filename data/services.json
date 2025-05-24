@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "RDS",
+        "description": "RDS service",
+        "category": "Database (RDS, Redshift, DynamoDB)"
+    },
+    {
+        "id": 2,
+        "name": "DynamoDB",
+        "description": "DynamoDB",
+        "category": "Database (RDS, Redshift, DynamoDB)"
+    },
+    {
+        "id": 3,
+        "name": "Redshift",
+        "description": "Redshift service",
+        "category": "Database (RDS, Redshift, DynamoDB)"
+    }
+]

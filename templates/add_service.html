@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Service - Cloud Services Cost Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Add New Service</h1>
+    <a href="{{ url_for('services') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i> Back to Services
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Service Details</h5>
+            </div>
+            <div class="card-body">
+                {% if error %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i> {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('add_service') }}">
+                    <div class="mb-3">
+                        <label for="service_name" class="form-label">Service Name</label>
+                        <input type="text" class="form-control" id="service_name" name="service_name" required>
+                        <div class="form-text">Enter a unique name for the cloud service</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="service_category" class="form-label">Service Category</label>
+                        <select class="form-select" id="service_category" name="service_category" required>
+                            <option value="" selected disabled>Select a category</option>
+                            {% for category in categories %}
+                            <option value="{{ category }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Select the category this service belongs to</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="service_description" class="form-label">Service Description</label>
+                        <textarea class="form-control" id="service_description" name="service_description" rows="3" required></textarea>
+                        <div class="form-text">Provide a detailed description of the service</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> Save Service
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

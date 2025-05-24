@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Cloud Services Cost Manager{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="card-title">Cloud Services Cost Manager</h1>
+                <p class="card-text">Track and analyze your cloud service costs across different environments</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-server fa-3x mb-3 text-primary"></i>
+                <h5 class="card-title">Manage Services</h5>
+                <p class="card-text">Add and manage cloud services</p>
+                <a href="{{ url_for('services') }}" class="btn btn-primary">Go to Services</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-tags fa-3x mb-3 text-info"></i>
+                <h5 class="card-title">Service Categories</h5>
+                <p class="card-text">Manage service categories</p>
+                <a href="{{ url_for('service_categories') }}" class="btn btn-info text-white">Go to Categories</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-layer-group fa-3x mb-3 text-success"></i>
+                <h5 class="card-title">Environments</h5>
+                <p class="card-text">Manage your environments</p>
+                <a href="{{ url_for('environments') }}" class="btn btn-success">Go to Environments</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-dollar-sign fa-3x mb-3 text-warning"></i>
+                <h5 class="card-title">Cost Tracking</h5>
+                <p class="card-text">Add and track service costs</p>
+                <a href="{{ url_for('costs') }}" class="btn btn-warning">Go to Costs</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-chart-pie fa-3x mb-3 text-danger"></i>
+                <h5 class="card-title">Dashboard</h5>
+                <p class="card-text">Visualize cost data with charts</p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-danger">Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="{{ url_for('add_service') }}" class="btn btn-outline-primary btn-block mb-2 w-100">
+                            <i class="fas fa-plus-circle me-2"></i> Add New Service
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('add_service_category') }}" class="btn btn-outline-info btn-block mb-2 w-100">
+                            <i class="fas fa-plus-circle me-2"></i> Add New Category
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('add_environment') }}" class="btn btn-outline-success btn-block mb-2 w-100">
+                            <i class="fas fa-plus-circle me-2"></i> Add New Environment
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="{{ url_for('add_cost') }}" class="btn btn-outline-warning btn-block mb-2 w-100">
+                            <i class="fas fa-plus-circle me-2"></i> Add New Cost Entry
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

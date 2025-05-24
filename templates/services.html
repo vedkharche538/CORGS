@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Services - Redshift Cost Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Services</h1>
+    <a href="{{ url_for('add_service') }}" class="btn btn-primary">
+        <i class="fas fa-plus-circle me-2"></i> Add New Service
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Service List</h5>
+    </div>
+    <div class="card-body">
+        {% if services %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for service in services %}
+                    <tr>
+                        <td>{{ service.id }}</td>
+                        <td>{{ service.name }}</td>
+                        <td><span class="badge bg-info">{{ service.category }}</span></td>
+                        <td>{{ service.description }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_service', service_id=service.id) }}" onsubmit="return confirm('Are you sure you want to delete this service? This will also delete all cost records associated with it.')" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> No services found. Please add a service.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

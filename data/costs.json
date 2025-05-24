@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "service_id": 1,
+        "environment": "dev",
+        "cost": 215.0,
+        "month": "April",
+        "year": 2025,
+        "date_added": "2025-05-24 01:41:27"
+    },
+    {
+        "id": 2,
+        "service_id": 2,
+        "environment": "dev",
+        "cost": 412.3,
+        "month": "April",
+        "year": 2025,
+        "date_added": "2025-05-24 01:41:44"
+    },
+    {
+        "id": 3,
+        "service_id": 3,
+        "environment": "dev",
+        "cost": 7111.0,
+        "month": "April",
+        "year": 2025,
+        "date_added": "2025-05-24 01:42:06"
+    }
+]

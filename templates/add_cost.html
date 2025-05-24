@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Cost - Cloud Services Cost Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Add New Cost</h1>
+    <a href="{{ url_for('costs') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i> Back to Costs
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">Cost Details</h5>
+            </div>
+            <div class="card-body">
+                {% if error %}
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i> {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('add_cost') }}">
+                    <div class="mb-3">
+                        <label for="service_id" class="form-label">Service</label>
+                        <select class="form-select" id="service_id" name="service_id" required>
+                            <option value="" selected disabled>Select a service</option>
+                            {% for service in services %}
+                            <option value="{{ service.id }}">{{ service.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="environment" class="form-label">Environment</label>
+                        <select class="form-select" id="environment" name="environment" required>
+                            <option value="" selected disabled>Select an environment</option>
+                            {% for env in environments %}
+                            <option value="{{ env }}">{{ env }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="cost_amount" class="form-label">Cost Amount ($)</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="cost_amount" name="cost_amount" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="month" class="form-label">Month</label>
+                            <select class="form-select" id="month" name="month" required>
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October">October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="year" class="form-label">Year</label>
+                            <input type="number" min="2020" max="2030" class="form-control" id="year" name="year" value="2025" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-2"></i> Save Cost
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

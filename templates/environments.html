@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Environments - Cloud Services Cost Manager{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Environments</h1>
+    <a href="{{ url_for('add_environment') }}" class="btn btn-success">
+        <i class="fas fa-plus-circle me-2"></i> Add New Environment
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Environment List</h5>
+    </div>
+    <div class="card-body">
+        {% if environments %}
+        <div class="row">
+            {% for environment in environments %}
+            <div class="col-md-4 mb-3">
+                <div class="card border-success">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ environment }}</h5>
+                        <p class="card-text text-muted">Cloud services environment</p>
+                        <form method="POST" action="{{ url_for('delete_environment', environment_name=environment) }}" onsubmit="return confirm('Are you sure you want to delete this environment? This will also delete all cost records associated with it.')" class="mt-2">
+                            <button type="submit" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash me-1"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> No environments found. Please add an environment.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

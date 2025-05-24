@@ -1,0 +1,331 @@
+/* Custom styles for Cloud Services Cost Manager */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+    line-height: 1.6;
+}
+
+/* Navbar styling */
+.navbar {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 12px 0;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 8px 16px !important;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Card styling */
+.card {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.card-header {
+    font-weight: 600;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+}
+
+.card-body {
+    padding: 20px;
+    position: relative;
+}
+
+.card-footer {
+    padding: 12px 20px;
+    font-size: 0.85rem;
+}
+
+/* Button styling */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+}
+
+/* Table styling */
+.table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    padding: 12px 15px;
+}
+
+.table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 123, 255, 0.03);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.07);
+}
+
+/* Environment selector */
+.environment-selector {
+    transition: all 0.2s;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.environment-selector.active {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.environment-selector:hover:not(.active) {
+    background-color: #f8f9fa;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+/* Footer */
+.footer {
+    border-top: 1px solid #e9ecef;
+    padding: 20px 0;
+}
+
+/* Dashboard specific styles */
+.dashboard-header {
+    padding: 10px 0 20px 0;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 2.2rem;
+    color: #333;
+}
+
+.filter-card {
+    background-color: #fff;
+    margin-bottom: 25px;
+    border-left: 4px solid #007bff;
+}
+
+.chart-card {
+    min-height: 380px;
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+}
+
+.chart-loading, .chart-no-data {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+}
+
+.chart-no-data {
+    color: #6c757d;
+    text-align: center;
+}
+
+.chart-no-data p {
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+/* Card header gradient backgrounds */
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+    color: white;
+}
+
+.bg-gradient-info {
+    background: linear-gradient(45deg, #17a2b8, #117a8b);
+    color: white;
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(45deg, #ffc107, #d39e00);
+    color: #212529;
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(45deg, #dc3545, #bd2130);
+    color: white;
+}
+
+/* Chart actions */
+.chart-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Summary cards */
+.summary-card {
+    border-radius: 12px;
+    transition: all 0.3s;
+    border-top: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.summary-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.bg-primary-light {
+    background-color: rgba(0, 123, 255, 0.15);
+}
+
+.bg-success-light {
+    background-color: rgba(40, 167, 69, 0.15);
+}
+
+.bg-info-light {
+    background-color: rgba(23, 162, 184, 0.15);
+}
+
+.bg-warning-light {
+    background-color: rgba(255, 193, 7, 0.15);
+}
+
+.env-selector-heading {
+    padding: 8px 0;
+    font-weight: 500;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.environment-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.card, .alert {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.chart-card {
+    animation: slideUp 0.5s ease-out;
+}
+
+/* Custom styles for specific cards on homepage */
+.card .fa-server {
+    color: #007bff;
+}
+
+.card .fa-layer-group {
+    color: #28a745;
+}
+
+.card .fa-dollar-sign {
+    color: #ffc107;
+}
+
+.card .fa-chart-pie {
+    color: #dc3545;
+}
+
+.card .fa-tags {
+    color: #17a2b8;
+}
+
+/* Form styling */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.form-select, .form-control {
+    border-radius: 8px;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    transition: all 0.2s;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
