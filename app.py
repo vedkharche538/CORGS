@@ -4,10 +4,14 @@ import json
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import webview
+import appdirs
 app = Flask(__name__)
 window = webview.create_window('Cloud Services Cost Management', app)
 # Data storage file paths
-DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+# DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+
+DATA_DIR = appdirs.user_data_dir('CloudServicesCostManager', 'Astra')
+
 os.makedirs(DATA_DIR, exist_ok=True)
 SERVICES_FILE = os.path.join(DATA_DIR, 'services.json')
 COSTS_FILE = os.path.join(DATA_DIR, 'costs.json')
