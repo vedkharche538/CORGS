@@ -11,24 +11,25 @@ let environmentBreakdownChart;
 function updateDashboard() {
     const selectedMonth = document.getElementById('month-select').value;
     const selectedYear = document.getElementById('year-select').value;
+    const selectedEnvironment = document.getElementById('environment-select').value;
 
     // Show loading states
     showLoading();
 
     // Update all charts with new filter values
-    loadCostsByCategoryChart(selectedMonth, selectedYear);
-    loadCostsByEnvironmentChart(selectedMonth, selectedYear);
-    loadCostsByServiceChart(selectedMonth, selectedYear);
-    loadCostTrendChart(selectedMonth, selectedYear);
+    loadCostsByCategoryChart(selectedMonth, selectedYear, selectedEnvironment);
+    loadCostsByEnvironmentChart(selectedMonth, selectedYear, selectedEnvironment);
+    loadCostsByServiceChart(selectedMonth, selectedYear, selectedEnvironment);
+    loadCostTrendChart(selectedMonth, selectedYear, 'monthly', selectedEnvironment);
 
     // Reset environment breakdown chart (it will be updated on selection)
     resetEnvironmentBreakdownChart();
 
     // Update summary metrics
-    loadSummaryData(selectedMonth, selectedYear);
+    loadSummaryData(selectedMonth, selectedYear, selectedEnvironment);
 
     // Refresh environment selectors with new filters
-    setupEnvironmentSelectors();
+    setupEnvironmentSelectors(selectedEnvironment);
 }
 
 // Function to show loading indicators
@@ -56,9 +57,9 @@ function resetEnvironmentBreakdownChart() {
 }
 
 // Function to load summary data
-function loadSummaryData(month = 'all', year = 'all') {
+function loadSummaryData(month = 'all', year = 'all', environment = 'all') {
     // Call your API to get summary metrics
-    fetch(`/api/dashboard_summary?month=${month}&year=${year}`)
+    fetch(`/api/dashboard_summary?month=${month}&year=${year}&environment=${environment}`)
         .then(response => response.json())
         .then(data => {
             document.getElementById('totalCost').textContent = '$' + data.total_cost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -93,12 +94,13 @@ function changeViewMode(mode) {
     // Update chart with the selected view mode
     const selectedMonth = document.getElementById('month-select').value;
     const selectedYear = document.getElementById('year-select').value;
-    loadCostTrendChart(selectedMonth, selectedYear, mode);
+    const selectedEnvironment = document.getElementById('environment-select').value;
+    loadCostTrendChart(selectedMonth, selectedYear, mode, selectedEnvironment);
 }
 
 // Load Costs by Environment Chart
-function loadCostsByEnvironmentChart(month = 'all', year = 'all') {
-    fetch(`/api/costs_by_environment?month=${month}&year=${year}`)
+function loadCostsByEnvironmentChart(month = 'all', year = 'all', environment = 'all') {
+    fetch(`/api/costs_by_environment?month=${month}&year=${year}&environment=${environment}`)
         .then(response => response.json())
         .then(data => {
             // Hide loading indicator
@@ -198,8 +200,8 @@ function loadCostsByEnvironmentChart(month = 'all', year = 'all') {
 }
 
 // Load Costs by Service Chart
-function loadCostsByServiceChart(month = 'all', year = 'all') {
-    fetch(`/api/costs_by_service?month=${month}&year=${year}`)
+function loadCostsByServiceChart(month = 'all', year = 'all', environment = 'all') {
+    fetch(`/api/costs_by_service?month=${month}&year=${year}&environment=${environment}`)
         .then(response => response.json())
         .then(data => {
             // Hide loading indicator
@@ -301,8 +303,8 @@ function loadCostsByServiceChart(month = 'all', year = 'all') {
 }
 
 // Load Costs by Category Chart
-function loadCostsByCategoryChart(month = 'all', year = 'all') {
-    fetch(`/api/costs_by_category?month=${month}&year=${year}`)
+function loadCostsByCategoryChart(month = 'all', year = 'all', environment = 'all') {
+    fetch(`/api/costs_by_category?month=${month}&year=${year}&environment=${environment}`)
         .then(response => response.json())
         .then(data => {
             // Hide loading indicator
@@ -402,8 +404,8 @@ function loadCostsByCategoryChart(month = 'all', year = 'all') {
 }
 
 // Load Cost Trend Chart
-function loadCostTrendChart(month = 'all', year = 'all', viewMode = 'monthly') {
-    fetch(`/api/costs_trend?month=${month}&year=${year}`)
+    function loadCostTrendChart(month = 'all', year = 'all', viewMode = 'monthly', environment = 'all') {
+    fetch(`/api/costs_trend?month=${month}&year=${year}&environment=${environment}&viewMode=${viewMode}`)
         .then(response => response.json())
         .then(data => {
             // Hide loading indicator
@@ -709,6 +711,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set up filter change listeners
     document.getElementById('month-select').addEventListener('change', updateDashboard);
     document.getElementById('year-select').addEventListener('change', updateDashboard);
+        document.getElementById('environment-select').addEventListener('change', updateDashboard);
 
     // Set up view buttons for trend chart
     document.getElementById('monthlyViewBtn').addEventListener('click', () => changeViewMode('monthly'));

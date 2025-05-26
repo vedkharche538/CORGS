@@ -279,6 +279,7 @@ def dashboard():
 def api_costs_by_environment():
     month = request.args.get('month', 'all')
     year = request.args.get('year', 'all')
+    environment = request.args.get('environment', 'all')
 
     costs_data = load_data(COSTS_FILE)
     services_data = {s['id']: s['name'] for s in load_data(SERVICES_FILE)}
@@ -310,6 +311,7 @@ def api_costs_by_environment():
 def api_costs_by_service():
     month = request.args.get('month', 'all')
     year = request.args.get('year', 'all')
+    environment = request.args.get('environment', 'all')
 
     costs_data = load_data(COSTS_FILE)
     services_data = {s['id']: s['name'] for s in load_data(SERVICES_FILE)}
@@ -346,6 +348,7 @@ def api_costs_by_service():
 def api_costs_by_category():
     month = request.args.get('month', 'all')
     year = request.args.get('year', 'all')
+    environment = request.args.get('environment', 'all')
 
     costs_data = load_data(COSTS_FILE)
     services_data = load_data(SERVICES_FILE)
@@ -415,6 +418,7 @@ def api_costs_by_month(year):
 def api_costs_by_environment_and_service():
     month = request.args.get('month', 'all')
     year = request.args.get('year', 'all')
+    environment = request.args.get('environment', 'all')
 
     costs_data = load_data(COSTS_FILE)
     services_data = {s['id']: s['name'] for s in load_data(SERVICES_FILE)}
@@ -429,6 +433,10 @@ def api_costs_by_environment_and_service():
             costs_data = [cost for cost in costs_data if cost['year'] == year_int]
         except ValueError:
             pass  # Invalid year format, don't filter
+
+        # Filter by environment if needed
+        if environment != 'all':
+            costs_data = [cost for cost in costs_data if cost['environment'] == environment]
 
     result = {}
     for cost in costs_data:
@@ -451,8 +459,13 @@ def api_costs_by_environment_and_service():
 def api_costs_trend():
     month = request.args.get('month', 'all')
     year = request.args.get('year', 'all')
+    environment = request.args.get('environment', 'all')
+    view_mode = request.args.get('viewMode', 'monthly')
 
     costs_data = load_data(COSTS_FILE)
+
+    if len(costs_data) == 0:
+        return jsonify([])
 
     # Filter by year if specified
     if year != 'all':
@@ -462,14 +475,24 @@ def api_costs_trend():
         except ValueError:
             pass  # Invalid year format, don't filter
 
+    # Filter by environment if needed
+    if environment != 'all':
+        costs_data = [cost for cost in costs_data if cost['environment'] == environment]
+
+    # For monthly view with month filter, make sure we have data for selected month
+    if view_mode == 'monthly' and month != 'all':
+        has_month_data = any(cost['month'] == month for cost in costs_data)
+        if not has_month_data:
+            return jsonify([])
+
     # Group costs by month and year
     result = {}
     for cost in costs_data:
-        period = f"{cost['month']} {cost['year']}"
-
-        # If month filter is applied, only include data for that month
-        if month != 'all' and cost['month'] != month:
+        # For quarterly and yearly views, we need to include all months, not just the filtered one
+        if month != 'all' and cost['month'] != month and view_mode == 'monthly':
             continue
+
+        period = f"{cost['month']} {cost['year']}"
 
         if period not in result:
             result[period] = 0
@@ -481,13 +504,59 @@ def api_costs_trend():
         'July': 7, 'August': 8, 'September': 9, 'October': 10, 'November': 11, 'December': 12
     }
 
+    quarters = {
+        'January': 'Q1', 'February': 'Q1', 'March': 'Q1',
+        'April': 'Q2', 'May': 'Q2', 'June': 'Q2',
+        'July': 'Q3', 'August': 'Q3', 'September': 'Q3',
+        'October': 'Q4', 'November': 'Q4', 'December': 'Q4'
+    }
+
+    # Group by view mode (monthly, quarterly, yearly)
+    if view_mode == 'quarterly' or view_mode == 'yearly':
+        # Create new result dictionary for grouped data
+        grouped_result = {}
+
+        for period, cost in result.items():
+            month, year = period.split(' ')
+
+            if view_mode == 'quarterly':
+                # Group by quarter
+                if month in quarters:  # Make sure month is valid
+                    quarter = quarters[month]
+                    new_period = f"{quarter} {year}"
+                else:
+                    # Skip invalid data
+                    continue
+            else:
+                # Group by year
+                new_period = year
+
+            if new_period not in grouped_result:
+                grouped_result[new_period] = 0
+            grouped_result[new_period] += cost
+
+        # Replace original result with grouped data
+        result = grouped_result
+        print(f"After {view_mode} grouping: {len(result)} periods")
+
     sorted_data = []
     for period, cost in result.items():
-        month, year = period.split(' ')
+        # For monthly view, split period into month and year
+        if view_mode == 'monthly':
+            month, year = period.split(' ')
+            sort_key = (int(year), months_order[month])
+        elif view_mode == 'quarterly':
+            quarter, year = period.split(' ')
+            # Extract quarter number (Q1 -> 1, Q2 -> 2, etc.)
+            quarter_num = int(quarter[1])
+            sort_key = (int(year), quarter_num)
+        else:  # yearly
+            sort_key = (int(period), 0)
+
         sorted_data.append({
             'period': period,
             'cost': cost,
-            'sort_key': (int(year), months_order[month])
+            'sort_key': sort_key
         })
 
     sorted_data.sort(key=lambda x: x['sort_key'])
@@ -500,13 +569,14 @@ def api_costs_trend():
 def api_dashboard_summary():
     month = request.args.get('month', 'all')
     year = request.args.get('year', 'all')
+    environment = request.args.get('environment', 'all')
 
     costs_data = load_data(COSTS_FILE)
     services_data = load_data(SERVICES_FILE)
     environments_data = load_data(ENVIRONMENTS_FILE)
     categories_data = load_data(SERVICE_CATEGORIES_FILE)
 
-    # Filter costs by month and year if specified
+    # Filter costs by month, year, and environment if specified
     if month != 'all':
         costs_data = [cost for cost in costs_data if cost['month'] == month]
 
@@ -516,6 +586,9 @@ def api_dashboard_summary():
             costs_data = [cost for cost in costs_data if cost['year'] == year_int]
         except ValueError:
             pass  # Invalid year format, don't filter
+
+    if environment != 'all':
+        costs_data = [cost for cost in costs_data if cost['environment'] == environment]
 
     # Calculate total cost
     total_cost = sum(cost['cost'] for cost in costs_data)
