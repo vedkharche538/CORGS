@@ -19,7 +19,7 @@
             </div>
             <div class="col-md-8">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="month-select" class="form-label">Month</label>
                             <select class="form-select" id="month-select">
@@ -39,7 +39,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="year-select" class="form-label">Year</label>
                             <select class="form-select" id="year-select">
@@ -47,6 +47,17 @@
                                 <option value="2023">2023</option>
                                 <option value="2024">2024</option>
                                 <option value="2025">2025</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="environment-select" class="form-label">Environment</label>
+                            <select class="form-select" id="environment-select">
+                                <option value="all">All Environments</option>
+                                {% for environment in environments %}
+                                <option value="{{ environment }}">{{ environment }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>
@@ -317,7 +328,7 @@
         resetEnvironmentBreakdownChart();
 
         // Update summary metrics
-        loadSummaryData(selectedMonth, selectedYear);
+        loadSummaryData(selectedMonth, selectedYear, selectedEnvironment);
 
         // Refresh environment selectors with new filters
         setupEnvironmentSelectors();
@@ -400,6 +411,9 @@
         document.getElementById('quarterlyViewBtn').addEventListener('click', () => changeViewMode('quarterly'));
         document.getElementById('yearlyViewBtn').addEventListener('click', () => changeViewMode('yearly'));
 
+        // Add event listener for environment filter
+        document.getElementById('environment-select').addEventListener('change', updateDashboard);
+
         // Load summary metrics
         loadSummaryData();
 
@@ -411,15 +425,16 @@
     function updateDashboard() {
         const selectedMonth = document.getElementById('month-select').value;
         const selectedYear = document.getElementById('year-select').value;
+        const selectedEnvironment = document.getElementById('environment-select').value;
 
         // Show loading states
         showLoading();
 
         // Update all charts with new filter values
-        loadCostsByCategoryChart(selectedMonth, selectedYear);
-        loadCostsByEnvironmentChart(selectedMonth, selectedYear);
-        loadCostsByServiceChart(selectedMonth, selectedYear);
-        loadCostTrendChart(selectedMonth, selectedYear);
+        loadCostsByCategoryChart(selectedMonth, selectedYear, selectedEnvironment);
+        loadCostsByEnvironmentChart(selectedMonth, selectedYear, selectedEnvironment);
+        loadCostsByServiceChart(selectedMonth, selectedYear, selectedEnvironment);
+        loadCostTrendChart(selectedMonth, selectedYear, 'monthly', selectedEnvironment);
 
         // Reset environment breakdown chart (it will be updated on selection)
         resetEnvironmentBreakdownChart();
@@ -453,9 +468,9 @@
     }
 
     // Function to load summary data
-    function loadSummaryData(month = 'all', year = 'all') {
+    function loadSummaryData(month = 'all', year = 'all', environment = 'all') {
         // Call your API to get summary metrics
-        fetch(`/api/dashboard_summary?month=${month}&year=${year}`)
+        fetch(`/api/dashboard_summary?month=${month}&year=${year}&environment=${environment}`)
             .then(response => response.json())
             .then(data => {
                 document.getElementById('totalCost').textContent = '$' + data.total_cost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
@@ -490,12 +505,13 @@
         // Update chart with the selected view mode
         const selectedMonth = document.getElementById('month-select').value;
         const selectedYear = document.getElementById('year-select').value;
-        loadCostTrendChart(selectedMonth, selectedYear, mode);
+        const selectedEnvironment = document.getElementById('environment-select').value;
+        loadCostTrendChart(selectedMonth, selectedYear, mode, selectedEnvironment);
     }
 
     // Load Costs by Category Chart
-    function loadCostsByCategoryChart(month = 'all', year = 'all') {
-        fetch(`/api/costs_by_category?month=${month}&year=${year}`)
+    function loadCostsByCategoryChart(month = 'all', year = 'all', environment = 'all') {
+        fetch(`/api/costs_by_category?month=${month}&year=${year}&environment=${environment}`)
             .then(response => response.json())
             .then(data => {
                 // Hide loading indicator
@@ -597,8 +613,8 @@
             }
 
             // Load Costs by Environment Chart
-            function loadCostsByEnvironmentChart(month = 'all', year = 'all') {
-        fetch(`/api/costs_by_environment?month=${month}&year=${year}`)
+            function loadCostsByEnvironmentChart(month = 'all', year = 'all', environment = 'all') {
+        fetch(`/api/costs_by_environment?month=${month}&year=${year}&environment=${environment}`)
             .then(response => response.json())
             .then(data => {
                 // Hide loading indicator
@@ -803,8 +819,8 @@
             }
 
             // Load Cost Trend Chart
-            function loadCostTrendChart(month = 'all', year = 'all', viewMode = 'monthly') {
-        fetch(`/api/costs_trend?month=${month}&year=${year}`)
+            function loadCostTrendChart(month = 'all', year = 'all', viewMode = 'monthly', environment = 'all') {
+        fetch(`/api/costs_trend?month=${month}&year=${year}&environment=${environment}&viewMode=${viewMode}`)
             .then(response => response.json())
             .then(data => {
                 // Hide loading indicator
